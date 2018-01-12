@@ -2,8 +2,8 @@
 #define OPENDTAM_HPP
 
 #include <opencv2/core/core.hpp>
-#include <opencv2/gpu/gpu.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/cuda.hpp>
+#include <opencv2/highgui.hpp>
 #include <queue>
 #include <list>
 #include <iostream>
@@ -38,7 +38,7 @@
 
 using namespace cv;
 using namespace std;
-using namespace cv::gpu;
+using namespace cv::cuda;
 class OpenDTAM{
     int rows,cols;
     Mat cameraMatrix;

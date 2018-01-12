@@ -43,7 +43,7 @@ int main( int argc, char** argv ){
 
 int App_main( int argc, char** argv )
 {
-    int numImg=50;
+    int numImg=600;
 
 #if !defined WIN32 && !defined _WIN32 && !defined WINCE && defined __linux__ && !defined ANDROID
     pthread_setname_np(pthread_self(),"App_main");
@@ -70,7 +70,7 @@ int App_main( int argc, char** argv )
         cout<<"Opening: "<< filename << endl;
         
         imread(filename, -1).convertTo(image,CV_32FC3,1.0/65535.0);
-        resize(image,image,Size(),reconstructionScale,reconstructionScale);
+        cv::resize(image,image,Size(),reconstructionScale,reconstructionScale);
         
         images.push_back(image.clone());
         Rs.push_back(R.clone());
