@@ -38,8 +38,8 @@ sudo apt-key add /var/cuda-repo-8-0-local-ga2/7fa2af80.pub
 sudo apt-get update
 sudo apt-get -yq install cuda
 
-export PATH=/usr/local/cuda-9.1/bin:$PATH
-export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64:$LD_LIBRARY_PATH
+export PATH=/usr/local/cuda-8.8/bin:$PATH
+export LD_LIBRARY_PATH=/usr/local/cuda-8.0/lib64:$LD_LIBRARY_PATH
 
 # export PATH=/usr/local/cuda-9.1/bin:$PATH
 # export LD_LIBRARY_PATH=/usr/local/cuda-9.1/lib64:$LD_LIBRARY_PATH
@@ -101,7 +101,7 @@ sudo ldconfig
 
 # OPENDTAM
 cd /home/magican/Documents/prj/repos/3D-reconstruction/
-git clone https://github.com/TeddybearCrisis/OpenDTAM-3.1.git OpenDTAM
+git clone https://github.com/magican/OpenDTAM/tree/opencv_3.4.0_cuda_8.0 OpenDTAM
 cd OpenDTAM
 mkdir build
 cd build

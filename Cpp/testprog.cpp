@@ -43,7 +43,7 @@ int main( int argc, char** argv ){
 
 int App_main( int argc, char** argv )
 {
-    int numImg=600;
+    int numImg=50;
 
 #if !defined WIN32 && !defined _WIN32 && !defined WINCE && defined __linux__ && !defined ANDROID
     pthread_setname_np(pthread_self(),"App_main");
