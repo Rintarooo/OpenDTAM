@@ -24,7 +24,7 @@ void gpause(){
 }
 void gcheck(){
     while(ready||CV_XADD(&pausing,0)){
-        usleep(100);
+//        usleep(100);
         if(allDie)
                     return;
     }
@@ -46,7 +46,7 @@ void pfShow(const string name,const Mat& _mat,int defaultscale, Vec2d autoscale)
     
     Gmux.unlock();
     while(nameShow.size()>5||pausing){
-        usleep(100);
+//        usleep(100);
         if(allDie)
                     return;
     }
@@ -59,7 +59,7 @@ void pfWindow(const string name,int prop){
 
     Gmux.unlock();
     while(nameWin.size()>5||pausing){
-        usleep(100);
+//        usleep(100);
         if(allDie)
                     return;
     }

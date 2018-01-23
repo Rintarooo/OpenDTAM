@@ -271,7 +271,7 @@ void Cost::optimize(){
     if(!running_a){
         // Wait for QD to be done
         while(running_qd)
-          usleep(100);
+//          usleep(100);
         launch_optimzer_threads(this);
     }else{
         cout<<"Already running optimizer!"<<"\n";
@@ -434,7 +434,7 @@ toc();
 //     pfShow("a",_a);
     assert(aptr==_a.data);
     gcheck();
-    usleep(1);
+//    usleep(1);
     
 
         
