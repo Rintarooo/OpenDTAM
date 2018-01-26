@@ -56,13 +56,17 @@ __global__ void globalWeightedBoundsCost(m34 p,float weight, CONSTT)
     float xi = (p.data[0]*xf + p.data[1]*yf + p.data[3]);
     float yi = (p.data[4]*xf + p.data[5]*yf + p.data[7]);
     float minv=1000.0,maxv=0.0;
-    float mini=0;
+    float mini=-1.0f;
     for(unsigned int z=0;z<layers;z++){
         float c0=cdata[offset+z*layerStep];
         float wiz = wi+p.data[10]*z;
         float xiz = xi+p.data[2] *z;
         float yiz = yi+p.data[6] *z;
-        float4 c = tex2D<float4>(tex, xiz/wiz, yiz/wiz);
+        float um = xiz/wiz;
+        float vm = yiz/wiz;
+        if ((vm < 0.0f) || (um < 0.0f) || (um > float(cols) || (vm > float(rows))))
+            continue;
+        float4 c = tex2D<float4>(tex, um, vm);
         float v1 = fabsf(c.x - B.x);
         float v2 = fabsf(c.y - B.y);
         float v3 = fabsf(c.z - B.z);
@@ -72,19 +76,22 @@ __global__ void globalWeightedBoundsCost(m34 p,float weight, CONSTT)
 //             del=0;
 //         }
 //         del=sqrt(del);
-        del=0.001*del + fminf(del,.01f)*1.0f/.01f;
-        ns=c0*weight+(del)*(1-weight);
+        //del=0.001*del + fminf(del,.01f)*1.0f/.01f;
+        ns=(c0*(weight-1.0f)+(del)*weight) / weight;
 //         ns=del;
         cdata[offset+z*layerStep]=ns;
         if (ns < minv) {
-        minv = ns;
-        mini = z;
+            minv = ns;
+            mini = z;
+            //loInd[offset]=c.x;
         }
-        maxv=fmaxf(ns,maxv);
+        maxv=fminf(ns,maxv);
     }
     lo[offset]=minv;
-    loInd[offset]=mini;
     hi[offset]=maxv;
+    if (mini < 0.0f)
+        return;
+    loInd[offset]=mini;
 }
 
 

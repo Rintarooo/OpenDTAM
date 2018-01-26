@@ -82,7 +82,7 @@ int App_main( int argc, char** argv )
     ret=cret.createMatHeader();
     //Setup camera matrix
     double sx=reconstructionScale;
-    double sy=reconstructionScale;
+    double sy=reconstructionScale;/*
     cameraMatrix+=(Mat)(Mat_<double>(3,3) <<    0.0,0.0,0.5,
                                                 0.0,0.0,0.5,
                                                 0.0,0.0,0.0);
@@ -91,10 +91,10 @@ int App_main( int argc, char** argv )
                                                                 0.0,0.0,1.0));
     cameraMatrix-=(Mat)(Mat_<double>(3,3) <<    0.0,0.0,0.5,
                                                 0.0,0.0,0.5,
-                                                0.0,0.0,0);
+                                                0.0,0.0,0);*/
     int layers=32;
     int imagesPerCV=20;
-    CostVolume cv(images[0],(FrameID)0,layers,0.015,0.0,Rs[0],Ts[0],cameraMatrix);;
+    CostVolume cv(images[0],(FrameID)0,layers,0.01,0.001,Rs[0],Ts[0],cameraMatrix);;
 
 //     //New Way (Needs work)
 //     OpenDTAM odm(cameraMatrix);

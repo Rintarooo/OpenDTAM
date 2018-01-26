@@ -16,6 +16,9 @@
 #include "graphics.hpp"
 #include <iostream>
 
+#include <opencv/cv.hpp>
+#include <opencv/highgui.h>
+
 using namespace std;
 using namespace cv;
 using namespace cv::cuda;
@@ -87,6 +90,8 @@ CostVolume::CostVolume(Mat image, FrameID _fid, int _layers, float _near,
     baseImageGray=baseImageGray.reshape(0,rows);
 
     loInd.setTo(Scalar(0, 0, 0),cvStream);
+    lo.setTo(Scalar(1000));
+    hi.setTo(Scalar(0.0));
     dataContainer.setTo(Scalar(initialCost),cvStream);
 
     data = (float*) dataContainer.data;
@@ -148,6 +153,41 @@ void CostVolume::simpleTex(const Mat& image, Stream cvStream){
     cudaSafeCall(cudaCreateTextureObject(&texObj, &resDesc, &texDesc, NULL));
     }
    //return texObj;
+}
+
+void debugFMap(cv::Mat m)
+{
+    m = m.clone();
+    double minVal, maxVal;
+    cv::Point2i minLoc, maxLoc;
+    cv::minMaxLoc(m, &minVal, &maxVal, &minLoc, &maxLoc);
+    double delta = max(1e-5, maxVal - minVal);
+    m.convertTo(m, CV_32F, 1.0 / delta, - minVal / delta);
+    cv::minMaxLoc(m, &minVal, &maxVal, &minLoc, &maxLoc);
+    cv::Mat d(m.size(), CV_8UC3);
+    cv::Point2i p;
+
+    auto convertColor = [](float value) -> cv::Vec3b {
+        float l = value * 4.0f;
+        if (l < 1.0f) {
+            return cv::Vec3b(255.0f * l, 0.0f, 0.0f);
+        } else if (l < 2.0f) {
+            l -= 1.0f;
+            return cv::Vec3b(255.0f * (1.0f - l), 255.0f * l, 0.0f);
+        } else if (l < 3.0f) {
+            l -= 2.0f;
+            return cv::Vec3b(0.0f, 255.0f * (1.0f - l), 255.0f * l);
+        }
+        l -= 3.0f;
+        return cv::Vec3b(0.0f, 0.0f, 255.0f * (1.0f - l));
+    };
+    for (p.y = 0; p.y < m.rows; ++p.y) {
+        for (p.x = 0; p.x < m.cols; ++p.x) {
+            d.at<cv::Vec3b>(p) = convertColor(m.at<float>(p));
+        }
+    }
+    cv::imshow("debug", d);
+    cv::waitKey();
 }
 
 void CostVolume::updateCost(const Mat& _image, const cv::Mat& R, const cv::Mat& T){
@@ -219,10 +259,27 @@ void CostVolume::updateCost(const Mat& _image, const cv::Mat& R, const cv::Mat& 
     Mat cameraMatrixTex(3,4,CV_64FC1);
     cameraMatrixTex=0.0;
     cameraMatrix.copyTo(cameraMatrixTex(Range(0,3),Range(0,3)));
-    cameraMatrixTex(Range(0,2), Range(2,3)) += 0.5;//add 0.5 to x,y out //removing causes crash
+    //cameraMatrixTex(Range(0,2), Range(2,3)) += 0.5;//add 0.5 to x,y out //removing causes crash
 
     Mat imFromWorld=cameraMatrixTex*viewMatrixImage;//3x4
     Mat imFromCV=imFromWorld*projection.inv();
+
+    Mat ref = projection.inv();
+
+    const float ref_data[] = { ref.at<double>(0, 0), ref.at<double>(0, 1), ref.at<double>(0, 2), ref.at<double>(0, 3),
+                               ref.at<double>(1, 0), ref.at<double>(1, 1), ref.at<double>(1, 2), ref.at<double>(1, 3),
+                               ref.at<double>(2, 0), ref.at<double>(2, 1), ref.at<double>(2, 2), ref.at<double>(2, 3),
+                               ref.at<double>(3, 0), ref.at<double>(3, 1), ref.at<double>(3, 2), ref.at<double>(3, 3) };
+
+
+    const float cur_data[] = { imFromWorld.at<double>(0, 0), imFromWorld.at<double>(0, 1), imFromWorld.at<double>(0, 2), imFromWorld.at<double>(0, 3),
+                               imFromWorld.at<double>(1, 0), imFromWorld.at<double>(1, 1), imFromWorld.at<double>(1, 2), imFromWorld.at<double>(1, 3),
+                               imFromWorld.at<double>(2, 0), imFromWorld.at<double>(2, 1), imFromWorld.at<double>(2, 2), imFromWorld.at<double>(2, 3) };
+
+    const float r_data[] = { imFromCV.at<double>(0, 0), imFromCV.at<double>(0, 1), imFromCV.at<double>(0, 2), imFromCV.at<double>(0, 3),
+                             imFromCV.at<double>(1, 0), imFromCV.at<double>(1, 1), imFromCV.at<double>(1, 2), imFromCV.at<double>(1, 3),
+                             imFromCV.at<double>(2, 0), imFromCV.at<double>(2, 1), imFromCV.at<double>(2, 2), imFromCV.at<double>(2, 3) };
+
     assert(baseImage.isContinuous());
     assert(lo.isContinuous());
     assert(hi.isContinuous());
@@ -266,11 +323,15 @@ void CostVolume::updateCost(const Mat& _image, const cv::Mat& R, const cv::Mat& 
 //    volumeProjectCaller(persp,CONST_ARGS);
 //    simpleCostCaller(persp,CONST_ARGS);
 //    globalWeightedCostCaller(persp,.3,CONST_ARGS);
-    float w=count+++initialWeight;//fun parse
-    w/=(w+1); 
+    //float w=count+++initialWeight;//fun parse
+    //w/=(w+1);
     assert(localStream);
-    globalWeightedBoundsCostCaller(persp,w,CONST_ARGS);
+    ++count;
+    globalWeightedBoundsCostCaller(persp,count,CONST_ARGS);
 
+    cv::Mat dMap;
+    loInd.download(dMap);
+    debugFMap(dMap);
 }
 
 
