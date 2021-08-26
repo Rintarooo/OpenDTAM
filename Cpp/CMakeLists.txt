@@ -47,8 +47,15 @@ add_subdirectory(Scheduler)
 
 include_directories("${BASEPATH}" ${CUDA_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${OpenCV_INCLUDE_DIRS})
 
+# set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};
+#   -gencode arch=compute_61,code=sm_61;
+#   --use_fast_math;
+#   --restrict;
+#   -lineinfo;
+#   -O3
+# )
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};
-  -gencode arch=compute_61,code=sm_61;
+  -gencode arch=compute_52,code=sm_52;
   --use_fast_math;
   --restrict;
   -lineinfo;
