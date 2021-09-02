@@ -1,6 +1,6 @@
 OpenDTAM for Opencv 3.4
 ========
-![Screenshot from 2021-08-26 18-22-16](https://user-images.githubusercontent.com/51239551/131076840-1e4d9116-d1d5-41ff-aaa8-d98f627a6021.png)
+![Screenshot from 2021-09-01 15-28-38](https://user-images.githubusercontent.com/51239551/131765721-0d786baf-b8d5-4b63-a0e8-729849f0d713.png)
 
 
 An open source implementation of DTAM
