@@ -78,7 +78,7 @@ int App_main( int argc, char** argv )
         Rs0.push_back(R.clone());
         Ts0.push_back(T.clone());
     }
-    HostMem cret(images[0].rows,images[0].cols,CV_32FC1);
+    HostMem cret(images[0].rows,images[0].cols,CV_32FC1);// cv::cuda::HostMem
     ret=cret.createMatHeader();
     //Setup camera matrix
     double sx=reconstructionScale;
@@ -94,6 +94,7 @@ int App_main( int argc, char** argv )
                                                 0.0,0.0,0);
     int layers=32;
     int imagesPerCV=20;
+    // set reference(=base) image
     CostVolume cv(images[0],(FrameID)0,layers,0.015,0.0,Rs[0],Ts[0],cameraMatrix);;
 
 //     //New Way (Needs work)
@@ -138,7 +139,7 @@ int App_main( int argc, char** argv )
             Optimizer optimizer(cv);
             optimizer.initOptimization();
             GpuMat a(cv.loInd.size(),cv.loInd.type());
-             cv.loInd.copyTo(a,cv.cvStream);
+             cv.loInd.copyTo(a,cv.cvStream);// initialize a with Cminidx(loInd)
 //            cv.cvStream.enqueueCopy(cv.loInd,a);
             GpuMat d;
             denoiser.cacheGValues();
@@ -168,7 +169,7 @@ int App_main( int argc, char** argv )
                 
 
                 for (int i = 0; i < 10; i++) {
-                    d=denoiser(a,optimizer.epsilon,optimizer.getTheta());
+                    d=denoiser(a,optimizer.epsilon,optimizer.getTheta());// DepthmapDenoiseWeightedHuber.cpp, line178, DepthmapDenoiseWeightedHuberImpl::operator()
                     QDcount++;
                     
 //                    denoiser._qx.download(ret);
@@ -180,7 +181,7 @@ int App_main( int argc, char** argv )
                 }
                 doneOptimizing=optimizer.optimizeA(d,a);
                 Acount++;
-            }while(!doneOptimizing);
+            }while(!doneOptimizing);// while(theta > thetaMin)
 //             optimizer.lambda=.05;
 //             optimizer.theta=10000;
 //             optimizer.optimizeA(a,a);
