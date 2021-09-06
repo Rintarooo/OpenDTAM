@@ -26,9 +26,17 @@ void CostVolume::solveProjection(const cv::Mat& R, const cv::Mat& T) {
     projection.create(4, 4, CV_64FC1);
     projection=0.0;
     projection(Range(0, 2), Range(0, 3)) += cameraMatrix.rowRange(0, 2);
+    // (fx,  0.0,  cx,
+    // 0.0,   fy,  cy,
+    
 
     projection.at<double>(2,3)=1.0;
     projection.at<double>(3,2)=1.0;
+    // (fx,  0.0,  cx,    ,
+    // 0.0,   fy,  cy,    ,
+    //    ,     ,    , 1.0,
+    //    ,     , 1.0,     )
+
 //    {//debug
 //        cout<<"Augmented Camera Matrix:\n"<<projection<<endl;
 //    }
@@ -48,6 +56,10 @@ void CostVolume::checkInputs(const cv::Mat& R, const cv::Mat& T,
     assert(T.type() == CV_64FC1);
     assert(_cameraMatrix.size() == Size(3, 3));
     assert(_cameraMatrix.type() == CV_64FC1);
+    // _cameraMatrix=
+    // (fx,  0.0,  cx,
+    // 0.0,   fy,  cy,
+    // 0.0,  0.0, 1.0)
     CV_Assert(_cameraMatrix.at<double>(2,0)==0.0);
     CV_Assert(_cameraMatrix.at<double>(2,1)==0.0);
     CV_Assert(_cameraMatrix.at<double>(2,2)==1.0);
@@ -218,11 +230,14 @@ void CostVolume::updateCost(const Mat& _image, const cv::Mat& R, const cv::Mat& 
     RTToP(R,T,viewMatrixImage);
     Mat cameraMatrixTex(3,4,CV_64FC1);
     cameraMatrixTex=0.0;
+    // (fx,  0.0,  cx,
+    // 0.0,   fy,  cy,
+    // 0.0,  0.0, 1.0)
     cameraMatrix.copyTo(cameraMatrixTex(Range(0,3),Range(0,3)));
     cameraMatrixTex(Range(0,2), Range(2,3)) += 0.5;//add 0.5 to x,y out //removing causes crash
 
-    Mat imFromWorld=cameraMatrixTex*viewMatrixImage;//3x4
-    Mat imFromCV=imFromWorld*projection.inv();
+    Mat imFromWorld=cameraMatrixTex*viewMatrixImage;//K[R|t](3x4)=K(3x4)*[R|t](4x4)
+    Mat imFromCV=imFromWorld*projection.inv();//(3x4)=(3x4)*(4x4), projection = CVFromWorld
     assert(baseImage.isContinuous());
     assert(lo.isContinuous());
     assert(hi.isContinuous());

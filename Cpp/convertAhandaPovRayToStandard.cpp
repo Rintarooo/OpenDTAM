@@ -3,6 +3,10 @@
 // It is based on a file they provided there, but makes the world coordinate system right handed, with z up,
 // x right, and y forward.
 
+// https://www.doc.ic.ac.uk/~ahanda/HighFrameRateTracking/computeTpov_cam.cpp
+
+
+
 #include <opencv2/core.hpp>
 #include <iostream>
 #include <fstream>
