@@ -28,6 +28,12 @@ build sample source code
 ```
 <br>
 
+if you fail, modify `-gencode arch`, which is nvcc option in `Cpp/CMakeLists.txt` depending on your GPU Compute Capability(CC).
+```bash
+./run.sh
+```
+<br>
+
 
 ## Build Instructions on Ubuntu 16.04
 

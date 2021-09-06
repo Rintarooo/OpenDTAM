@@ -123,6 +123,10 @@ int App_main( int argc, char** argv )
         if(cv.count<imagesPerCV){
             
             cv.updateCost(image, R, T);
+            // cv.loInd.download(ret);
+            // imshow("debug", ret);
+            // waitKey(10);
+            std::cout << "updateCost\n";
             cudaDeviceSynchronize();
 //             gpause();
 //             for( int i=0;i<layers;i++){
