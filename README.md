@@ -10,9 +10,14 @@ Based on Newcombe, Richard A., Steven J. Lovegrove, and Andrew J. Davison's "DTA
 This project depends on qtbase5-dev, [OpenCV 3](https://github.com/Itseez/opencv "OpenCV") and [Cuda](https://developer.nvidia.com/cuda-downloads "Cuda").
 
 ## Dataset
-https://www.doc.ic.ac.uk/~ahanda/HighFrameRateTracking/
+[Trajectory_30_seconds
+](https://www.doc.ic.ac.uk/~ahanda/HighFrameRateTracking/)
 
-[Trajectory_30_seconds](https://www.doc.ic.ac.uk/~ahanda/HighFrameRateTracking/traj_30_seconds.tgz)
+download Trajectory_30_seconds
+```bash
+curl -O https://www.doc.ic.ac.uk/~ahanda/HighFrameRateTracking/traj_30_seconds.tgz
+
+```
 
 
 ## Usage
