@@ -243,6 +243,7 @@ void CostVolume::updateCost(const Mat& _image, const cv::Mat& R, const cv::Mat& 
     assert(hi.isContinuous());
     assert(loInd.isContinuous());
     
+    /*
     //for each slice
     for(int y=0; y<rows; y++){
         //find projection from slice to image (3x3)
@@ -269,6 +270,7 @@ void CostVolume::updateCost(const Mat& _image, const cv::Mat& R, const cv::Mat& 
                         //update high value
                 //save results
     }
+    */
     double *p = (double*)imFromCV.data;
     m34 persp;
     for(int i=0;i<12;i++) persp.data[i]=p[i];

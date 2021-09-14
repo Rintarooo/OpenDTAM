@@ -55,7 +55,7 @@ include_directories("${BASEPATH}" ${CUDA_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS} ${O
 #   -O3
 # )
 set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS};
-  -gencode arch=compute_52,code=sm_52;
+  -gencode arch=compute_52,code=sm_52;# Compute Capability(CC):5.2
   --use_fast_math;
   --restrict;
   -lineinfo;

@@ -36,7 +36,8 @@ RUN apt update && \
     libboost-all-dev \
     qtbase5-dev \
     qttools5-dev-tools \
-    qt5-default
+    qt5-default 
+    # libcanberra-gtk*
 
 
 # Media I/O:
